@@ -1,13 +1,13 @@
 <template>
   <div id="app" class="container" v-show="!loading">
     <div class="column column--todo">
-      <Card v-for="(card, index) in cardsBy('todo')" :payload="card" :key="index"></Card>
+      <Card v-for="(card, index) in cardsBy('todo')" :payload="card" :key="index" @card:update="cardWasUpdate"></Card>
     </div>
     <div class="column column--development">
-      <Card v-for="(card, index) in cardsBy('development')" :payload="card" :key="index"></Card>
+      <Card v-for="(card, index) in cardsBy('development')" :payload="card" :key="index" @card:update="cardWasUpdate"></Card>
     </div>
     <div class="column column--done">
-      <Card v-for="(card, index) in cardsBy('done')" :payload="card" :key="index"></Card>
+      <Card v-for="(card, index) in cardsBy('done')" :payload="card" :key="index" @card:update="cardWasUpdate"></Card>
     </div>
   </div>
 </template>
@@ -37,6 +37,13 @@ export default {
       if (this.cards) {
         return this.cards.filter(card => card.state === state)
       }
+    },
+    cardWasUpdate(id) {
+      axios
+        .put(`http://localhost:8000/api/update/${id}`, {state: 'done'})
+        .then(response => {
+          this.cards[response.data.id] = response.data
+        })
     }
   }
 }

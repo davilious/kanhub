@@ -2,6 +2,7 @@
   <div v-bind:class="generateClassByState(payload.state)">
     <span>{{ payload.title }}</span>
     <span>{{ payload.state }}</span>
+    <button v-on:click="updateCard(payload._id)">Update</button>
   </div>
 </template>
 
@@ -16,6 +17,9 @@
     methods: {
       generateClassByState(state) {
         return `card card--${state}`
+      },
+      updateCard(id) {
+        this.$emit('card:update', id)
       }
     }
   }
