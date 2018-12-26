@@ -1,8 +1,7 @@
 <template>
-  <div v-bind:class="generateClassByState(payload.state)">
+  <div v-bind:class="generateClassByState(payload.state)" v-on:drop="onDrop(payload._id)">
     <span>{{ payload.title }}</span>
     <span>{{ payload.state }}</span>
-    <button v-on:click="updateCard(payload._id)">Update</button>
   </div>
 </template>
 
@@ -18,8 +17,8 @@
       generateClassByState(state) {
         return `card card--${state}`
       },
-      updateCard(id) {
-        this.$emit('card:update', id)
+      onDrop(id) {
+        this.$emit('card:drop', id)
       }
     }
   }

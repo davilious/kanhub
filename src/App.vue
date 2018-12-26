@@ -1,26 +1,29 @@
 <template>
   <div id="app" class="container" v-show="!loading">
-    <div class="column column--todo">
-      <Card v-for="(card, index) in cardsBy('todo')" :payload="card" :key="index" @card:update="cardWasUpdate"></Card>
-    </div>
-    <div class="column column--development">
-      <Card v-for="(card, index) in cardsBy('development')" :payload="card" :key="index" @card:update="cardWasUpdate"></Card>
-    </div>
-    <div class="column column--done">
-      <Card v-for="(card, index) in cardsBy('done')" :payload="card" :key="index" @card:update="cardWasUpdate"></Card>
-    </div>
+    <draggable :options="{group:'board'}" @start="drag=true" @end="onDragEnd" class="column column--todo" name="todo">
+      <Card v-for="(card, index) in cardsBy('todo')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
+    </draggable>
+    <draggable :options="{group:'board'}" @start="drag=true" @end="onDragEnd" class="column column--development" name="development">
+      <Card v-for="(card, index) in cardsBy('development')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
+    </draggable>
+    <draggable :options="{group:'board'}" @start="drag=true" @end="onDragEnd"  class="column column--done" name="done">
+      <Card v-for="(card, index) in cardsBy('done')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
+    </draggable>
   </div>
 </template>
 
 <script>
+import draggable from 'vuedraggable'
 import Card from './components/Card.vue';
 
 export default {
   name: 'Kanhub',
   data() {
     return {
+      currentCardId: null,
       cards: null,
-      loading: true
+      loading: true,
+      drag: false
     }
   },
   mounted () {
@@ -31,16 +34,21 @@ export default {
       })
       .finally(() => this.loading = false)
   },
-  components: { Card },
+  components: { Card, draggable },
   methods: {
     cardsBy(state) {
       if (this.cards) {
         return this.cards.filter(card => card.state === state)
       }
     },
-    cardWasUpdate(id) {
+    cardWasDrop(id) {
+      this.currentCardId = id
+    },
+    onDragEnd(evt) {
+      const currentColumn = evt.to.getAttribute('name')
+
       axios
-        .put(`http://localhost:8000/api/update/${id}`, {state: 'done'})
+        .put(`http://localhost:8000/api/update/${this.currentCardId}`, {state: currentColumn})
         .then(response => {
           this.cards[response.data.id] = response.data
         })
