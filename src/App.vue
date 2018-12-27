@@ -1,12 +1,15 @@
 <template>
   <div id="app" class="container" v-show="!loading">
-    <draggable :options="{group:'board'}" @start="drag=true" @end="onDragEnd" class="column column--todo" name="todo">
+    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="onDragEnd" class="column column--todo" name="todo">
+      <h1>Todo</h1>
       <Card v-for="(card, index) in cardsBy('todo')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
     </draggable>
-    <draggable :options="{group:'board'}" @start="drag=true" @end="onDragEnd" class="column column--development" name="development">
+    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="onDragEnd" class="column column--development" name="development">
+      <h1>Development</h1>
       <Card v-for="(card, index) in cardsBy('development')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
     </draggable>
-    <draggable :options="{group:'board'}" @start="drag=true" @end="onDragEnd"  class="column column--done" name="done">
+    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="onDragEnd"  class="column column--done" name="done">
+      <h1>Done</h1>
       <Card v-for="(card, index) in cardsBy('done')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
     </draggable>
   </div>
@@ -57,36 +60,4 @@ export default {
 }
 </script>
 
-<style scoped>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-
-.container {
-  display: flex;
-  width: 100%;
-}
-
-.column {
-  flex-basis: 33%;
-  padding: 10px;
-}
-
-.column.column--todo {
-  order: 1;
-}
-
-.column.column--development {
-  order: 2;
-}
-
-.column.column--done {
-  order: 3;
-}
-</style>
 
