@@ -1,7 +1,13 @@
 <template>
   <div id="app" class="container" v-show="!loading">
+    <Addtodo
+      :reset="this.showModal"
+      v-show="this.showModal"
+      @add-todo:add="addCardTodo"
+      @add-todo:cancel="hideAddTodoModal">
+    </Addtodo>
     <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="onDragEnd" class="column column--todo" name="todo">
-      <h1>Todo</h1>
+      <h1>Todo <a href="#" @click="showAddTodoModal"> + </a></h1>
       <Card v-for="(card, index) in cardsBy('todo')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
     </draggable>
     <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="onDragEnd" class="column column--development" name="development">
@@ -18,6 +24,7 @@
 <script>
 import draggable from 'vuedraggable'
 import Card from './components/Card.vue';
+import Addtodo from './components/Addtodo.vue';
 
 export default {
   name: 'Kanhub',
@@ -26,7 +33,8 @@ export default {
       currentCardId: null,
       cards: null,
       loading: true,
-      drag: false
+      drag: false,
+      showModal: false
     }
   },
   mounted () {
@@ -37,7 +45,7 @@ export default {
       })
       .finally(() => this.loading = false)
   },
-  components: { Card, draggable },
+  components: { Card, Addtodo, draggable },
   methods: {
     cardsBy(state) {
       if (this.cards) {
@@ -55,6 +63,21 @@ export default {
         .then(response => {
           this.cards[response.data.id] = response.data
         })
+    },
+    addCardTodo(payload) {
+      axios
+        .post('http://localhost:8000/api/add', payload)
+        .then(response => {
+          this.cards = this.cards.concat([response.data])
+          this.showModal = false
+        })
+    },
+    showAddTodoModal(e) {
+      e.preventDefault()
+      this.showModal = true
+    },
+    hideAddTodoModal() {
+      this.showModal = false
     }
   }
 }
