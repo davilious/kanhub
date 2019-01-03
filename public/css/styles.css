@@ -31,8 +31,16 @@ body {
   order: 2;
 }
 
-.column.column--done {
+.column.column--acceptance {
   order: 3;
+}
+
+.column.column--release {
+  order: 4;
+}
+
+.column.column--done {
+  order: 5;
 }
 
 .row {

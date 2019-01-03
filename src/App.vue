@@ -14,6 +14,14 @@
       <h1>Development</h1>
       <Card v-for="(card, index) in cardsBy('development')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
     </draggable>
+    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="onDragEnd" class="column column--acceptance" name="acceptance">
+      <h1>Acceptance </h1>
+      <Card v-for="(card, index) in cardsBy('acceptance')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
+    </draggable>
+    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="onDragEnd" class="column column--release" name="release">
+      <h1>Release </h1>
+      <Card v-for="(card, index) in cardsBy('release')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
+    </draggable>
     <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="onDragEnd"  class="column column--done" name="done">
       <h1>Done</h1>
       <Card v-for="(card, index) in cardsBy('done')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>

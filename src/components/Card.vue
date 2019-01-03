@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="card-body">
-      <span class="card-body__title">{{ payload.title }}</span>
+      <span class="card-body__title">{{ payload.title | truncate }}</span>
     </div>
     <div class="card-foot">
       <div class="card-foot__tags" v-html="generateTags(payload.tags)"></div>
@@ -36,10 +36,17 @@
         return `card-heading__logo--${app_name}`
       },
       generateAvatars(users) {
+        if (!users || !users.length || users[0] === "") return;
         return users.map( user => `<img src="https://github.com/${user}.png?size=30"> `).join('')
       },
       generateTags(tags) {
         return tags.map(tag => `<span class="card-foot__tags-tag card-foot__tags-tag--${tag}">${tag}</span>`).join('')
+      }
+    },
+    filters: {
+      truncate(str) {
+        return (str.length > 50) ?
+          str.substring(0, 50) + '…' : str
       }
     }
   }
@@ -94,7 +101,11 @@
 
   .card-body {
     margin-left: 50px;
+  }
+
+  .card-body__title {
     font-size: 0.9em;
+    line-height: 1.5;
   }
 
   .card-foot {
