@@ -1,11 +1,12 @@
 <template>
-  <div v-bind:class="generateClassByState(payload.state)" v-on:drop="handleDrop(payload._id)">
+  <div v-bind:class="generateClassByState(payload.state)" v-on:drop="handleDrop(payload._id)" v-bind:data-id="payload._id">
     <div class="card-heading">
       <div class="card-heading__logo" v-bind:class="addClassForLogo(payload.app_name)">
       </div>
       <div class="card-heading__text">
         {{ payload.app_name }}
       </div>
+      <div class="card-heading__handler" v-show="payload.state === 'done'"><a href="#" v-on:click="removeCard(payload._id)">remove</a></div>
     </div>
     <div class="card-body">
       <span class="card-body__title">{{ payload.title | truncate }}</span>
@@ -41,6 +42,11 @@
       },
       generateTags(tags) {
         return tags.map(tag => `<span class="card-foot__tags-tag card-foot__tags-tag--${tag}">${tag}</span>`).join('')
+      },
+      removeCard(id) {
+        this.$emit('card:remove', {
+          id: id
+        })
       }
     },
     filters: {
@@ -64,6 +70,7 @@
     padding: 20px;
     text-align: left;
     border: 1px solid #d4d7e1;
+    transition: opacity .6s;
   }
 
   .card:hover {
@@ -71,7 +78,19 @@
   }
 
   .card-heading {
+    position: relative;
     display: flex;
+  }
+
+  .card-heading__handler {
+    position: absolute;
+    font-size: 85%;
+    right: 0;
+    top: -10px;
+  }
+
+  .card-heading__handler > a {
+    color: blue
   }
 
   .card-heading__logo {

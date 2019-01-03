@@ -3,23 +3,23 @@
     <Addtodo :reset="this.showModal" v-show="this.showModal" @add-todo:add="addCardTodo" @add-todo:cancel="hideAddTodoModal"></Addtodo>
     <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd" class="column column--todo" name="todo">
       <h1>Todo <a href="#" @click="showAddTodoModal"> add one </a></h1>
-      <Card v-for="(card, index) in cardsBy('todo')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
+      <Card v-for="(card, index) in cardsBy('todo')" :payload="card" :key="index" @card:drop="cardWasDropped"></Card>
     </draggable>
     <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd" class="column column--development" name="development">
       <h1>Development</h1>
-      <Card v-for="(card, index) in cardsBy('development')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
+      <Card v-for="(card, index) in cardsBy('development')" :payload="card" :key="index" @card:drop="cardWasDropped"></Card>
     </draggable>
     <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd" class="column column--acceptance" name="acceptance">
       <h1>Acceptance </h1>
-      <Card v-for="(card, index) in cardsBy('acceptance')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
+      <Card v-for="(card, index) in cardsBy('acceptance')" :payload="card" :key="index" @card:drop="cardWasDropped"></Card>
     </draggable>
     <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd" class="column column--release" name="release">
       <h1>Release </h1>
-      <Card v-for="(card, index) in cardsBy('release')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
+      <Card v-for="(card, index) in cardsBy('release')" :payload="card" :key="index" @card:drop="cardWasDropped"></Card>
     </draggable>
     <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd"  class="column column--done" name="done">
       <h1>Done</h1>
-      <Card v-for="(card, index) in cardsBy('done')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
+      <Card v-for="(card, index) in cardsBy('done')" :payload="card" :key="index" @card:drop="cardWasDropped" @card:remove="cardWasRemoved"></Card>
     </draggable>
   </div>
 </template>
@@ -55,17 +55,25 @@ export default {
         return this.cards.filter(card => card.state === state)
       }
     },
-    cardWasDrop(id) {
+    cardWasDropped(id) {
       this.currentCardId = id
+    },
+    cardWasRemoved(payload) {
+      const $card = document.querySelector('[data-id="'+ payload.id + '"]')
+
+      axios
+        .put(`http://localhost:8000/api/update/${payload.id}`, {state: 'done_backet'})
+        .then(response => {
+          $card.style.opacity = 0
+        })
+        .then(response => {
+          setTimeout(() => $card.style.display = 'none', 650)
+        })
     },
     handleDragEnd(evt) {
       const currentColumn = evt.to.getAttribute('name')
 
-      axios
-        .put(`http://localhost:8000/api/update/${this.currentCardId}`, {state: currentColumn})
-        .then(response => {
-          this.cards[response.data.id] = response.data
-        })
+      axios.put(`http://localhost:8000/api/update/${this.currentCardId}`, {state: currentColumn})
     },
     addCardTodo(payload) {
       axios
@@ -84,7 +92,7 @@ export default {
     },
     handleEscape() {
       if (!this.showModal) return;
-      this .showModal = false;
+      this.showModal = false;
     }
   }
 }
