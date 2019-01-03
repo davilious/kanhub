@@ -23,6 +23,11 @@ body {
   font-size: 1em;
 }
 
+.column > h1 a {
+  font-size: 80%;
+  color: blue;
+}
+
 .column.column--todo {
   order: 1;
 }

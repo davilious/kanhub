@@ -1,5 +1,5 @@
 <template>
-  <div v-bind:class="generateClassByState(payload.state)" v-on:drop="onDrop(payload._id)">
+  <div v-bind:class="generateClassByState(payload.state)" v-on:drop="handleDrop(payload._id)">
     <div class="card-heading">
       <div class="card-heading__logo" v-bind:class="addClassForLogo(payload.app_name)">
       </div>
@@ -29,7 +29,7 @@
       generateClassByState(state) {
         return `card card--${state}`
       },
-      onDrop(id) {
+      handleDrop(id) {
         this.$emit('card:drop', id)
       },
       addClassForLogo(app_name) {
@@ -37,7 +37,7 @@
       },
       generateAvatars(users) {
         if (!users || !users.length || users[0] === "") return;
-        return users.map( user => `<img src="https://github.com/${user}.png?size=30"> `).join('')
+        return users.map(user => `<img src="https://github.com/${user}.png?size=30">`).join('')
       },
       generateTags(tags) {
         return tags.map(tag => `<span class="card-foot__tags-tag card-foot__tags-tag--${tag}">${tag}</span>`).join('')

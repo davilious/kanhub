@@ -1,28 +1,23 @@
 <template>
-  <div id="app" class="container" v-show="!loading">
-    <Addtodo
-      :reset="this.showModal"
-      v-show="this.showModal"
-      @add-todo:add="addCardTodo"
-      @add-todo:cancel="hideAddTodoModal">
-    </Addtodo>
-    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="onDragEnd" class="column column--todo" name="todo">
-      <h1>Todo <a href="#" @click="showAddTodoModal"> + </a></h1>
+  <div id="app" class="container" v-show="!loading" v-on:keydown.esc="handleEscape">
+    <Addtodo :reset="this.showModal" v-show="this.showModal" @add-todo:add="addCardTodo" @add-todo:cancel="hideAddTodoModal"></Addtodo>
+    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd" class="column column--todo" name="todo">
+      <h1>Todo <a href="#" @click="showAddTodoModal"> add one </a></h1>
       <Card v-for="(card, index) in cardsBy('todo')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
     </draggable>
-    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="onDragEnd" class="column column--development" name="development">
+    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd" class="column column--development" name="development">
       <h1>Development</h1>
       <Card v-for="(card, index) in cardsBy('development')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
     </draggable>
-    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="onDragEnd" class="column column--acceptance" name="acceptance">
+    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd" class="column column--acceptance" name="acceptance">
       <h1>Acceptance </h1>
       <Card v-for="(card, index) in cardsBy('acceptance')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
     </draggable>
-    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="onDragEnd" class="column column--release" name="release">
+    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd" class="column column--release" name="release">
       <h1>Release </h1>
       <Card v-for="(card, index) in cardsBy('release')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
     </draggable>
-    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="onDragEnd"  class="column column--done" name="done">
+    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd"  class="column column--done" name="done">
       <h1>Done</h1>
       <Card v-for="(card, index) in cardsBy('done')" :payload="card" :key="index" @card:drop="cardWasDrop"></Card>
     </draggable>
@@ -63,7 +58,7 @@ export default {
     cardWasDrop(id) {
       this.currentCardId = id
     },
-    onDragEnd(evt) {
+    handleDragEnd(evt) {
       const currentColumn = evt.to.getAttribute('name')
 
       axios
@@ -86,6 +81,10 @@ export default {
     },
     hideAddTodoModal() {
       this.showModal = false
+    },
+    handleEscape() {
+      if (!this.showModal) return;
+      this .showModal = false;
     }
   }
 }

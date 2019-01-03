@@ -68,9 +68,6 @@
 
 <style scoped>
   .addtodo {
-  	display: flex;
-  	align-items: center;
-    justify-content: center;
     position: absolute;
     top: 0;
     left: 0;
@@ -81,13 +78,34 @@
   }
 
   .addtodo-modal {
+    position: relative;
   	padding: 20px;
     width: 400px;
     background: white;
     border: 1px solid #d4d7e1;
+    margin-left: 135px;
+    margin-top: 15px;
+    z-index: 1;
+  }
+
+  .addtodo-modal:before {
+    position: absolute;
+    content: '';
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: red;
+    background: white;
+    border: 1px solid #d4d7e1;
+    z-index: 10;
+    transform: rotate(-45deg);
+    border-right: none;
+    border-bottom: none;
+    left: -11px;
   }
 
   .addtodo-modal h1 {
-    font-size: 1em
+    font-size: 1em;
+    margin: 0 0 20px;
   }
 </style>
