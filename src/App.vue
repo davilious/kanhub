@@ -1,25 +1,79 @@
 <template>
   <div id="app" class="container" v-show="!loading" v-on:keydown.esc="handleEscape">
-    <Addtodo :reset="this.showModal" v-show="this.showModal" @add-todo:add="addCardTodo" @add-todo:cancel="hideAddTodoModal"></Addtodo>
-    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd" class="column column--todo" name="todo">
+    <Addtodo
+      :reset="this.showModal"
+      v-show="this.showModal"
+      @add-todo:add="addCardTodo"
+      @add-todo:cancel="hideAddTodoModal">
+    </Addtodo>
+    <draggable
+      :options="{group:'board', draggable: '.card'}"
+      @start="drag=true"
+      @end="handleDragEnd"
+      class="column column--todo" name="todo">
       <h1>Todo <a href="#" @click="showAddTodoModal"> add one </a></h1>
-      <Card v-for="(card, index) in cardsBy('todo')" :payload="card" :key="index" @card:drop="cardWasDropped"></Card>
+      <Card
+        v-for="(card, index) in cardsBy('todo')"
+        :payload="card"
+        :key="index"
+        @card:drop="cardWasDropped">
+      </Card>
     </draggable>
-    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd" class="column column--development" name="development">
+    <draggable
+      :options="{group:'board', draggable: '.card'}"
+      @start="drag=true"
+      @end="handleDragEnd"
+      class="column column--development"
+      name="development">
       <h1>Development</h1>
-      <Card v-for="(card, index) in cardsBy('development')" :payload="card" :key="index" @card:drop="cardWasDropped"></Card>
+      <Card
+        v-for="(card, index) in cardsBy('development')"
+        :payload="card"
+        :key="index"
+        @card:drop="cardWasDropped">
+      </Card>
     </draggable>
-    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd" class="column column--acceptance" name="acceptance">
+    <draggable
+      :options="{group:'board', draggable: '.card'}"
+      @start="drag=true"
+      @end="handleDragEnd"
+      class="column column--acceptance"
+      name="acceptance">
       <h1>Acceptance </h1>
-      <Card v-for="(card, index) in cardsBy('acceptance')" :payload="card" :key="index" @card:drop="cardWasDropped"></Card>
+      <Card
+        v-for="(card, index) in cardsBy('acceptance')"
+        :payload="card"
+        :key="index"
+        @card:drop="cardWasDropped">
+      </Card>
     </draggable>
-    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd" class="column column--release" name="release">
+    <draggable
+      :options="{group:'board', draggable: '.card'}"
+      @start="drag=true"
+      @end="handleDragEnd"
+      class="column column--release"
+      name="release">
       <h1>Release </h1>
-      <Card v-for="(card, index) in cardsBy('release')" :payload="card" :key="index" @card:drop="cardWasDropped"></Card>
+      <Card
+        v-for="(card, index) in cardsBy('release')"
+        :payload="card"
+        :key="index"
+        @card:drop="cardWasDropped">
+      </Card>
     </draggable>
-    <draggable :options="{group:'board', draggable: '.card'}" @start="drag=true" @end="handleDragEnd"  class="column column--done" name="done">
+    <draggable
+      :options="{group:'board', draggable: '.card'}"
+      @start="drag=true"
+      @end="handleDragEnd"
+      class="column column--done"
+      name="done">
       <h1>Done</h1>
-      <Card v-for="(card, index) in cardsBy('done')" :payload="card" :key="index" @card:drop="cardWasDropped" @card:remove="cardWasRemoved"></Card>
+      <Card
+        v-for="(card, index) in cardsBy('done')"
+        :payload="card"
+        :key="index"
+        @card:drop="cardWasDropped"
+        @card:remove="cardWasRemoved"></Card>
     </draggable>
   </div>
 </template>
@@ -55,25 +109,30 @@ export default {
         return this.cards.filter(card => card.state === state)
       }
     },
-    cardWasDropped(id) {
-      this.currentCardId = id
+    cardWasDropped(payload) {
+      this.currentCardId = payload.id
     },
     cardWasRemoved(payload) {
-      const $card = document.querySelector('[data-id="'+ payload.id + '"]')
-
       axios
         .put(`http://localhost:8000/api/update/${payload.id}`, {state: 'done_backet'})
         .then(response => {
-          $card.style.opacity = 0
-        })
-        .then(response => {
-          setTimeout(() => $card.style.display = 'none', 650)
+          const index = this.cards.findIndex(card => card._id === payload.id)
+
+          this.cards.splice(index, 1)
         })
     },
     handleDragEnd(evt) {
+      const currentCardId = this.currentCardId
       const currentColumn = evt.to.getAttribute('name')
 
-      axios.put(`http://localhost:8000/api/update/${this.currentCardId}`, {state: currentColumn})
+      axios
+        .put(`http://localhost:8000/api/update/${currentCardId}`, {state: currentColumn})
+        .then(response => {
+          const index = this.cards.findIndex(card => card._id === response.data._id)
+
+          this.cards.splice(index, 1)
+          this.cards = this.cards.concat(response.data)
+        })
     },
     addCardTodo(payload) {
       axios

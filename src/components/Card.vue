@@ -1,5 +1,7 @@
 <template>
-  <div v-bind:class="generateClassByState(payload.state)" v-on:drop="handleDrop(payload._id)" v-bind:data-id="payload._id">
+  <div
+    v-bind:class="generateClassByState(payload.state)"
+    v-on:drop="handleDrop(payload._id)">
     <div class="card-heading">
       <div class="card-heading__logo" v-bind:class="addClassForLogo(payload.app_name)">
       </div>
@@ -31,7 +33,9 @@
         return `card card--${state}`
       },
       handleDrop(id) {
-        this.$emit('card:drop', id)
+        this.$emit('card:drop', {
+          id: id
+        })
       },
       addClassForLogo(app_name) {
         return `card-heading__logo--${app_name}`
@@ -175,6 +179,8 @@
     position: absolute;
     border-radius: 100%;
     border: 2px solid white;
+    width: 30px;
+    height: 30px;
   }
 
   .card-foot__users > img:not(:first-child) {
