@@ -45,6 +45,7 @@
         return users.map(user => `<img src="https://github.com/${user}.png?size=30">`).join('')
       },
       generateTags(tags) {
+        if (!tags || !tags.length) return
         return tags.map(tag => `<span class="card-foot__tags-tag card-foot__tags-tag--${tag}">${tag}</span>`).join('')
       },
       removeCard(id) {

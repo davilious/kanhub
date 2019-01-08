@@ -128,10 +128,10 @@ export default {
       axios
         .put(`http://localhost:8000/api/update/${currentCardId}`, {state: currentColumn})
         .then(response => {
-          const index = this.cards.findIndex(card => card._id === response.data._id)
+          const index = this.cards.findIndex(card => card._id === currentCardId)
 
           this.cards.splice(index, 1)
-          this.cards = this.cards.concat(response.data)
+          this.cards = this.cards.push(response.data)
         })
     },
     addCardTodo(payload) {
