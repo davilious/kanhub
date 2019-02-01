@@ -1,29 +1,18 @@
-# kanhub2
+# Kanban board (client)
 
-## Project setup
+> "A Kanban board is one of the tools that can be used to implement Kanban to manage work at a personal or organization level"
+
+## Technology
+
+Vuejs + [Nodejs + Mongodb](https://github.com/davilious/mongodbapi)
+
+### Project setup
 ```
 yarn install
 ```
 
-### Compiles and hot-reloads for development
+#### Compiles and run server
 ```
 yarn run serve
 ```
 
-### Compiles and minifies for production
-```
-yarn run build
-```
-
-### Run your tests
-```
-yarn run test
-```
-
-### Lints and fixes files
-```
-yarn run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
